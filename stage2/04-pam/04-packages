@@ -1,0 +1,10 @@
+xserver-xorg
+x11-xserver-utils
+xinit
+openbox
+xterm
+libwxgtk3.0-gtk3-dev
+portaudio19-dev
+libsndfile1-dev
+libsamplerate0-dev
+libcap-dev

@@ -1,0 +1,6 @@
+xset s off
+xset s noblank
+xset -dpms
+
+setxkbmap -option terminate:ctrl_alt_bksp
+pam.sh &

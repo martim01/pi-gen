@@ -181,7 +181,8 @@ The following environment variables are supported:
 
  * `FIRST_USER_PASS` (Default: unset)
 
-   Password for the first user. If unset, the account is locked.
+   Password for the first user. If unset, the accou
+   nt is locked.
 
  * `WPA_ESSID`, `WPA_PASSWORD` and `WPA_COUNTRY` (Default: unset)
 
