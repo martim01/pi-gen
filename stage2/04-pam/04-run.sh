@@ -5,7 +5,9 @@ install -m 644 files/bash_profile "${ROOTFS_DIR}/home/${FIRST_USER_NAME}/.bash_p
 install -m 644 files/autologin "${ROOTFS_DIR}/etc/systemd/system/getty@tty1.service.d/autologin.conf"
 install -m 755 files/initramfs.img "${ROOTFS_DIR}/boot/initramfs.img"
 install -m 644 files/splash.txt "${ROOTFS_DIR}/boot/splash.txt"
-install -m 64 files/splash.JPG"${ROOTFS_DIR}/boot/splash.JPG"
+install -m 644 files/splash.jpg "${ROOTFS_DIR}/boot/splash.jpg"
+
+install -m 440 files/020_pam_sudo "${ROOTFS_DIR}/etc/sudoers.d/02_pam_sudo"
 
 install -m 755 files/firstboot.service "${ROOTFS_DIR}/etc/systemd/system/firstboot.service"
 install -m 755 files/firstboot.sh "${ROOTFS_DIR}/boot/firstboot.sh"

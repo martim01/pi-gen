@@ -78,4 +78,5 @@ otg_mode=1
 arm_boost=1
 
 [all]
+disable_splash=1
 initramfs initramfs.img

@@ -1,2 +1,2 @@
-image=splash.JPG
-fullscreen=0
+image=splash.jpg
+fullscreen=1
