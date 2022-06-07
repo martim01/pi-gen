@@ -7,4 +7,7 @@ libwxgtk3.0-gtk3-dev
 portaudio19-dev
 libsndfile1-dev
 libsamplerate0-dev
+libavahi-client-dev
+libcurl4-openssl-dev
 libcap-dev
+libssl-dev
