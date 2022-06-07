@@ -65,6 +65,12 @@ max_framebuffers=2
 # Disable compensation for displays with overscan
 disable_overscan=1
 
+# Remove rainbow
+disable_splash=1
+
+# Add own splash screen
+initramfs initramfs.img
+
 [cm4]
 # Enable host mode on the 2711 built-in XHCI USB controller.
 # This line should be removed if the legacy DWC2 controller is required
@@ -78,5 +84,3 @@ otg_mode=1
 arm_boost=1
 
 [all]
-disable_splash=1
-initramfs initramfs.img

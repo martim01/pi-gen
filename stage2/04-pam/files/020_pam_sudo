@@ -1,7 +1,3 @@
-pam ALL=NOPASSWD:/usr/sbin/ntpd
-pam ALL=NOPASSWD:/bin/mount
-pam ALL=NOPASSWD:/bin/umount
-pam ALL=NOPASSWD:/sbin/service
+pam ALL=NOPASSWD:/usr/bin/systemctl
 pam ALL=NOPASSWD:/usr/local/bin/dosetup
 pam ALL=NOPASSWD:/usr/sbin/shutdown
-pam ALL=NOPASSWD:/usr/sbin/route
