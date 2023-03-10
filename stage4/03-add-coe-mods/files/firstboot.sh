@@ -27,8 +27,6 @@ fi
 #  systemctl restart dhcpcd.service
 #fi
 
-#clamav?
-
 #ansible ssh auto login
 KEYFILE=/boot/authorized_keys
 if test -f "$KEYFILE"; then
@@ -64,6 +62,5 @@ chmod +r /etc/x11vnc.pass
 #sentinal 1
 export S1_AGENT_INSTALL_CONFIG_PATH="/boot/S1_Config.cfg"
 dpkg -i /opt/SentinelAgent-aarch64_linux_v22_4_2_4.deb
-
 
 #ntp servers?
