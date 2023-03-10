@@ -12,10 +12,6 @@ install -v -m 655 files/eCalib "${ROOTFS_DIR}/opt/eCalib"
 install -v -m 777 files/eGTouchD.service "${ROOTFS_DIR}/etc/systemd/system/eGTouchD.service"
 install -v -m 777 files/81-egalax-touchscreen.rules "${ROOTFS_DIR}/etc/udev/rules.d/81-egalax-touchscreen.rules"
 
-install -v -m 644 files/freshclam.conf "${ROOTFS_DIR}/etc/clamav/freshclam.conf"
-install -v -m 777 files/scan "${ROOTFS_DIR}/etc/cron.daily/scan"
-install -v -m 644 files/crontab "${ROOTFS_DIR}/etc/crontab"
-
 install -v -m 644 files/timesyncd.conf "${ROOTFS_DIR}/etc/systemd/timesyncd.conf"
 
 install -v -m 777 files/firstboot.service "${ROOTFS_DIR}/lib/systemd/system/firstboot.service"
@@ -25,7 +21,8 @@ install -v -m 744 files/65-srvrkeys-none "${ROOTFS_DIR}/etc/X11/Xsession.d/65-sr
 
 install -v -m 644 files/thinclient-client.conf "${ROOTFS_DIR}/boot/thinclient-client.conf"
 install -v -m 644 files/net.cfg "${ROOTFS_DIR}/boot/net.cfg"
-
+install -v -m 644 files/S1_Config.cfg "${ROOTFS_DIR}/boot/S1_Config.cfg"
+install -v -m 644 files/SentinelAgent-aarch64_linux_v22_4_2_4.deb "${ROOTFS_DIR}/opt/SentinelAgent-aarch64_linux_v22_4_2_4.deb"
 
 on_chroot << EOF
 # create hostname file
@@ -37,6 +34,12 @@ if adduser --gecos "" --disabled-password tcadmin; then
  chpasswd <<< "tcadmin:6G!S7NM>=U&t1%NA"
 fi
 
+#add apt user
+if adduser --gecos "" --disabled-password tcaptly; then
+ usermod -a -G sudo tcaptly
+ chpasswd <<< "tcaptly:7H_J6SB<-U%t2$AG"
+fi
+
 #remove default user from sudo not sure why it has to be done here at the moment
 if deluser ${FIRST_USER_NAME} sudo; then
  echo "removed tcuser from sudo"
@@ -44,6 +47,11 @@ fi
 
 #don't allow tcuser to login via ssh
 echo -e 'DenyUsers\t${FIRST_USER_NAME}' >> /etc/ssh/sshd_config
+
+#make net.cfg on the /boot partition the one we use
+rm /etc/dhcpcd.conf
+ln -s /boot/net.cfg /etc/dhcpcd.conf
+
 
 #disable logging
 systemctl disable rsyslog
