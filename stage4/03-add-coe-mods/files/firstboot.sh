@@ -7,12 +7,13 @@ ufw allow 5900
 ufw enable
 
 #copy files from /boot for setup...
-#hostname
-HOSTFILE=/boot/hostname
-if test -f "$HOSTFILE"; then
-  mv $HOSTFILE /etc/hostname
-  # todo - need to update /etc/hosts
-fi
+
+#hostname - now using a symlink
+#HOSTFILE=/boot/hostname
+#if test -f "$HOSTFILE"; then
+#  mv $HOSTFILE /etc/hostname
+#  # todo - need to update /etc/hosts
+#fi
 
 #connection configuration
 CONFIGFILE=/boot/thinclient-client.conf
@@ -20,7 +21,7 @@ if test -f "$CONFIGFILE"; then
   mv $CONFIGFILE /etc/thinclient-client.conf
 fi
 
-#network config
+#network config - now using a symlink
 #NETWORKFILE=/boot/net.cfg
 #if test -f "$NETWORKFILE"; then
 #  mv $NETWORKFILE /etc/dhcpcd.conf
@@ -59,8 +60,3 @@ fi
 chmod +r /etc/x11vnc.pass
 
 
-#sentinal 1
-export S1_AGENT_INSTALL_CONFIG_PATH="/boot/S1_Config.cfg"
-dpkg -i /opt/SentinelAgent-aarch64_linux_v22_4_2_4.deb
-
-#ntp servers?

@@ -1,0 +1,62 @@
+#!/bin/bash
+
+#################################################################################################
+#
+# Script to add/update forward (A) and reverse (PTR) DNS records
+#
+# Author: Tim Fry
+# version:      Changed by      Date            Comments
+# 0.1           Tim Fry                         original
+# 0.2           Victor Walsh    8-nov-2019      updated to work with ip command
+# 0.3           Victor Walsh    31-jan-2022     Add functionality to better deal
+#                                               with IP address changes
+# 0.3.1         Richard Thompson 01-feb-2022    adjust regex to prevent octect
+#                                               matching for non local addresses
+# 0.4           Richard Thompson 30-jun-2021    updated to exclude FCPbridge interface
+# 0.5           Richard Thompson 26-Nov-2021    updated to only use nsupdate and /sbin/ip
+# 0.6           Richard Thompson 28-Jan-2022    added error checking for hostname and domain
+#                                               removed FCPbridge exclude and updated to use
+#                                               optional interface exclusion file
+# 0.7           Richard Thompson 12-Jan-2023    removed code for exclusion file and replaced with
+#                                               optional interface file
+#################################################################################################
+
+if [ ! $(/bin/hostname) ] || [ $(/bin/hostname) = "localhost" ] || [ ! $(/bin/hostname -d) ] || [ $(/bin/hostname -d) = "localdomain" ]
+then
+        echo "DNS Update failed.  Hostname or Domain is blank or set to local"
+        exit 1
+fi
+
+interfacefile="/usr/local/etc/bbc-ddns-register_interface"
+if [ -f "$interfacefile" ] && /usr/bin/grep -q '^interface=' $interfacefile
+then
+        interfacename=$(/usr/bin/grep '^interface=' $interfacefile|/usr/bin/cut -d= -f2)
+elif    /usr/sbin/ip link|/usr/bin/grep -q ens160
+then
+        interfacename="ens160"
+else
+        interfacename=$(/usr/sbin/ip addr|/usr/bin/grep -v -E '127\.|inet6'|/usr/bin/grep -m 1 inet|/usr/bin/awk '{print $7}')
+fi
+
+
+function check_if_ip_addresses_same() {
+# Forward (A) record
+if ! /bin/echo -e "update add $(/bin/hostname).$(/bin/hostname -d) 3600 A $(/sbin/ip addr|/usr/bin/grep $interfacename|/usr/bin/awk '{print $2}'|/bin/sed 's/\/.*//')\nsend\nquit\n" | /usr/bin/nsupdate -v
+then
+        echo "Sleeping for 30 seconds before retrying registration"
+        sleep 30
+        # Let us try again.  If fails then exit.  Job will run again with cron
+        if ! /bin/echo -e "update add $(/bin/hostname).$(/bin/hostname -d) 3600 A $(/sbin/ip addr|/usr/bin/grep $interfacename|/usr/bin/grep -m 1 inet|/usr/bin/awk '{print $2}'|/bin/sed 's/\/.*//')\nsend\nquit\n" | /usr/bin/nsupdate -v
+        then
+                echo "DNS Update failed.  Will retry on next run"
+                exit 1
+        fi
+return
+fi
+}
+
+# Forward (A) record
+/bin/echo -e "update add $(/bin/hostname).$(/bin/hostname -d) 3600 A $(/sbin/ip addr|/usr/bin/grep $interfacename|/usr/bin/grep -m 1 inet|/usr/bin/awk '{print $2}'|/bin/sed 's/\/.*//')\nsend\nquit\n" | /usr/bin/nsupdate -v || check_if_ip_addresses_same
+
+# Reverse (PTR) record
+/bin/echo -e "update add $(/sbin/ip addr|/usr/bin/grep $interfacename|/usr/bin/grep -m 1 inet|/usr/bin/awk '{print $2}'|/bin/sed 's/\/.*//'|/usr/bin/awk '{split($0,a,"."); print a[4]"."a[3]"." a[2]"."a[1]}').in-addr.arpa 3600 PTR $(/bin/hostname).$(/bin/hostname -d)\nsend\nquit\n" | /usr/bin/nsupdate -v

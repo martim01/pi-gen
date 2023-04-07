@@ -1,0 +1,4 @@
+#
+# Raspberry Pi OS official packages and updates
+#
+deb [signed-by=/etc/apt/keyrings/bbc_aptly_raspberrypios_bullseye.gpg] https://aptly.repo.bbc.co.uk/raspberrypios/prod bullseye main

@@ -5,5 +5,5 @@ qtchooser
 qt5-qmake
 qtbase5-dev-tools
 freerdp2-x11
-clamav
 ufw
+dnsutils

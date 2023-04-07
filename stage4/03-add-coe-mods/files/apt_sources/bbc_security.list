@@ -1,0 +1,4 @@
+#
+# Debian official security updates
+#
+deb [signed-by=/etc/apt/keyrings/bbc_aptly_debian_bullseye.gpg] https://aptly.repo.bbc.co.uk/debian/prod bullseye-security main contrib non-free

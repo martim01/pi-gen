@@ -21,8 +21,15 @@ install -v -m 744 files/65-srvrkeys-none "${ROOTFS_DIR}/etc/X11/Xsession.d/65-sr
 
 install -v -m 644 files/thinclient-client.conf "${ROOTFS_DIR}/boot/thinclient-client.conf"
 install -v -m 644 files/net.cfg "${ROOTFS_DIR}/boot/net.cfg"
-install -v -m 644 files/S1_Config.cfg "${ROOTFS_DIR}/boot/S1_Config.cfg"
-install -v -m 644 files/SentinelAgent-aarch64_linux_v22_4_2_4.deb "${ROOTFS_DIR}/opt/SentinelAgent-aarch64_linux_v22_4_2_4.deb"
+
+#apt sources
+install -v -m 644 files/pi.key "${ROOTFS_DIR}/tmp/pi.key"
+install -v -m 644 files/apt_sources/bbc_raspi_sources.list "${ROOTFS_DIR}/etc/apt/sources.list.d/bbc_raspi_sources.list"
+install -v -m 644 files/apt_sources/bbc_security.list "${ROOTFS_DIR}/etc/apt/sources.list.d/bbc_security.list"
+install -v -m 644 files/apt_sources/bbc_sources.list "${ROOTFS_DIR}/etc/apt/sources.list.d/bbc_sources.list"
+
+#dnsutils
+install -v -m 755 files/bbc-ddns-register "${ROOTFS_DIR}/usr/local/bin"
 
 on_chroot << EOF
 # create hostname file
@@ -37,7 +44,7 @@ fi
 #add apt user
 if adduser --gecos "" --disabled-password tcaptly; then
  usermod -a -G sudo tcaptly
- chpasswd <<< "tcaptly:7H_J6SB<-U%t2$AG"
+ chpasswd <<< "tcaptly:tc@pT1e"
 fi
 
 #remove default user from sudo not sure why it has to be done here at the moment
@@ -52,6 +59,8 @@ echo -e 'DenyUsers\t${FIRST_USER_NAME}' >> /etc/ssh/sshd_config
 rm /etc/dhcpcd.conf
 ln -s /boot/net.cfg /etc/dhcpcd.conf
 
+rm /etc/hostname
+ln -s /boot/hostname /etc/hostname
 
 #disable logging
 systemctl disable rsyslog
@@ -61,6 +70,17 @@ systemctl disable syslog.socket
 rfkill block wifi
 rfkill block bluetooth
 
+
+#apt keyring
+mkdir /etc/apt/keyrings
+cat /tmp/pi.key | gpg -o /etc/apt/keyrings/bbc_aptly/raspberrypios_bullseye.gpg --dearmor
+rm /tmp/pi.key
+
+#dnsutils
+ln -s /usr/local/bin/bbc-ddns-register /etc/cron.hourly/bbc-ddns-register
+
 #enable script that runs on first boot up only
 systemctl enable firstboot.service
 EOF
+
+

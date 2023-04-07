@@ -1,0 +1,16 @@
+#
+# Debian official packages and updates
+#
+
+# Main       - All free software that follows the DFSG (Debian Free Software Guidelines)
+# Contrib    - Free software that follows the DFSG but depends on software in Non-Free
+# Non-Free   - Software that does not follow the DFSG
+
+# Newer versions of the distribution
+deb [signed-by=/etc/apt/keyrings/bbc_aptly_debian_bullseye.gpg] https://aptly.repo.bbc.co.uk/debian/prod bullseye main contrib non-free
+
+# Major bug fix updates produced after the final release of the distribution
+deb [signed-by=/etc/apt/keyrings/bbc_aptly_debian_bullseye.gpg] https://aptly.repo.bbc.co.uk/debian/prod bullseye-updates main contrib non-free
+
+# Backported from newer distributions
+deb [signed-by=/etc/apt/keyrings/bbc_aptly_debian_bullseye.gpg] https://aptly.repo.bbc.co.uk/debian/prod bullseye-backports main contrib non-free
