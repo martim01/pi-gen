@@ -28,12 +28,15 @@ install -v -m 644 files/apt_sources/bbc_raspi_sources.list "${ROOTFS_DIR}/etc/ap
 install -v -m 644 files/apt_sources/bbc_security.list "${ROOTFS_DIR}/etc/apt/sources.list.d/bbc_security.list"
 install -v -m 644 files/apt_sources/bbc_sources.list "${ROOTFS_DIR}/etc/apt/sources.list.d/bbc_sources.list"
 
+
 #dnsutils
 install -v -m 755 files/bbc-ddns-register "${ROOTFS_DIR}/usr/local/bin"
 
 on_chroot << EOF
-# create hostname file
+# create hostname and domain file
 echo thinclient > /boot/hostname
+echo national.core.bbc.co.uk > /boot/domain
+echo tcuser:$6$pFETvmPHdBrpng0P$HwKNBtFSuhkOL.MuCyPTd1nR2gUA5j0uQKsPELEE29m7/YAM0lB5IMzVz/fFh/jT.g50l.DcHtaZdgUgJN12S/ > /boot/userconf.txt
 
 #add admin user
 if adduser --gecos "" --disabled-password tcadmin; then
@@ -42,9 +45,9 @@ if adduser --gecos "" --disabled-password tcadmin; then
 fi
 
 #add apt user
-if adduser --gecos "" --disabled-password tcaptly; then
- usermod -a -G sudo tcaptly
- chpasswd <<< "tcaptly:tc@pT1e"
+if adduser --gecos "" --disabled-password bbcansible; then
+ usermod -a -G sudo bbcansible
+ chpasswd -e <<< "bbcansible:$6$XvgvEGQvz1EnjxJu$.CBLDTUezjInULTsnRx1x9mhGfoMwAeDaDwYscR6PZqYmq4lqBemPlDke3MC1FYFf5ept8n3rdpZhBJXFe.Px0"
 fi
 
 #remove default user from sudo not sure why it has to be done here at the moment
@@ -72,11 +75,13 @@ rfkill block bluetooth
 
 
 #apt keyring
-mkdir /etc/apt/keyrings
+mkdir -p /etc/apt/keyrings/bbc_aptly
+rm -f /etc/apt/keyrings/bbc_aptly/raspberrypios_bullseye.gpg
 cat /tmp/pi.key | gpg -o /etc/apt/keyrings/bbc_aptly/raspberrypios_bullseye.gpg --dearmor
 rm /tmp/pi.key
 
 #dnsutils
+rm -f /etc/cron.hourly/bbc-ddns-register
 ln -s /usr/local/bin/bbc-ddns-register /etc/cron.hourly/bbc-ddns-register
 
 #enable script that runs on first boot up only

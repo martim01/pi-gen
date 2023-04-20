@@ -8,33 +8,32 @@ ufw enable
 
 #copy files from /boot for setup...
 
-#hostname - now using a symlink
-#HOSTFILE=/boot/hostname
-#if test -f "$HOSTFILE"; then
-#  mv $HOSTFILE /etc/hostname
-#  # todo - need to update /etc/hosts
-#fi
+#hostname and domain name - get and put in /etc/hosts
+HOSTFILE=/boot/hostname
+hostname=''
+if test -f "$HOSTFILE"; then
+  hostname=$(</boot/hostname)
+fi
+
+DOMAINFILE=/boot/domain
+domain='national.core.bbc.co.uk'
+if test -f "$DOMAINFILE"; then
+  domain=$(<$DOMAINFILE)
+fi
+
+#update /etc/hosts
+newLine="/127.0.0.1/c\127.0.0.1        $hostname.$domain $hostname localhost"
+sed -i "$newLine" /etc/hosts
+
+newLine="/127.0.1.1/c\127.0.1.1        $hostname.$domain $hostname"
+sed -i "$newLine" /etc/hosts
+
+/bin/hostname --file /etc/hostname
 
 #connection configuration
 CONFIGFILE=/boot/thinclient-client.conf
 if test -f "$CONFIGFILE"; then
   mv $CONFIGFILE /etc/thinclient-client.conf
-fi
-
-#network config - now using a symlink
-#NETWORKFILE=/boot/net.cfg
-#if test -f "$NETWORKFILE"; then
-#  mv $NETWORKFILE /etc/dhcpcd.conf
-#  systemctl restart dhcpcd.service
-#fi
-
-#ansible ssh auto login
-KEYFILE=/boot/authorized_keys
-if test -f "$KEYFILE"; then
-  mkdir /home/tcaptly/.ssh
-  mv $KEYFILE /home/tcaptly/.ssh/authorized_keys
-  chown tcadmin /home/tcaptly/.ssh/authorized_keys
-  chgrp tcadmin /home/tcaptly/.ssh/authorized_keys
 fi
 
 #set tcadmin password
@@ -44,10 +43,10 @@ if test -f "$PASSFILE"; then
 fi 
 
 #set tcadmin password
-PASSFILE=/boot/aptly_password
-if test -f "$PASSFILE"; then
- chpasswd <<< "tcaptly:`cat $PASSFILE`"
-fi 
+#PASSFILE=/boot/aptly_password
+#if test -f "$PASSFILE"; then
+# chpasswd <<< "tcaptly:`cat $PASSFILE`"
+#fi 
 
 
 #set x11vnc password
@@ -59,4 +58,5 @@ else
 fi 
 chmod +r /etc/x11vnc.pass
 
-
+#remove the raspi.list if it exists
+rm /etc/apt/sources.list.d/raspi.list
