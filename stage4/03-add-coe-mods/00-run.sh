@@ -36,7 +36,7 @@ on_chroot << EOF
 # create hostname and domain file
 echo thinclient > /boot/hostname
 echo national.core.bbc.co.uk > /boot/domain
-echo tcuser:$6$pFETvmPHdBrpng0P$HwKNBtFSuhkOL.MuCyPTd1nR2gUA5j0uQKsPELEE29m7/YAM0lB5IMzVz/fFh/jT.g50l.DcHtaZdgUgJN12S/ > /boot/userconf.txt
+#echo tcuser:$6$pFETvmPHdBrpng0P$HwKNBtFSuhkOL.MuCyPTd1nR2gUA5j0uQKsPELEE29m7/YAM0lB5IMzVz/fFh/jT.g50l.DcHtaZdgUgJN12S/ > /boot/userconf.txt
 
 #add admin user
 if adduser --gecos "" --disabled-password tcadmin; then
@@ -86,6 +86,9 @@ ln -s /usr/local/bin/bbc-ddns-register /etc/cron.hourly/bbc-ddns-register
 
 #enable script that runs on first boot up only
 systemctl enable firstboot.service
+
+rm -f /etc/xdg/autostart/piwiz.desktop
+
 EOF
 
 
