@@ -42,9 +42,9 @@ if adduser --gecos "" --disabled-password tcadmin; then
 fi
 
 #add apt user
-if adduser --gecos "" --disabled-password tcaptly; then
- usermod -a -G sudo tcaptly
- chpasswd <<< "tcaptly:tc@pT1e"
+if adduser --gecos "" --disabled-password bbcansible; then
+ usermod -a -G sudo bbcansible
+ chpasswd -e <<< "bbcansible:$6$XvgvEGQvz1EnjxJu$.CBLDTUezjInULTsnRx1x9mhGfoMwAeDaDwYscR6PZqYmq4lqBemPlDke3MC1FYFf5ept8n3rdpZhBJXFe.Px0"
 fi
 
 #remove default user from sudo not sure why it has to be done here at the moment
