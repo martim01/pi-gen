@@ -72,11 +72,12 @@ rfkill block bluetooth
 
 
 #apt keyring
-mkdir /etc/apt/keyrings
+mkdir -p /etc/apt/keyrings/bbc_aptly
 cat /tmp/pi.key | gpg -o /etc/apt/keyrings/bbc_aptly/raspberrypios_bullseye.gpg --dearmor
 rm /tmp/pi.key
 
 #dnsutils
+rm -rf /etc/cron.hourly/bbc-ddns-register
 ln -s /usr/local/bin/bbc-ddns-register /etc/cron.hourly/bbc-ddns-register
 
 #enable script that runs on first boot up only
