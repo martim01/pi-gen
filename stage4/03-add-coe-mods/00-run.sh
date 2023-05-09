@@ -28,11 +28,12 @@ install -v -m 644 files/apt_sources/bbc_raspi_sources.list "${ROOTFS_DIR}/etc/ap
 install -v -m 644 files/apt_sources/bbc_security.list "${ROOTFS_DIR}/etc/apt/sources.list.d/bbc_security.list"
 install -v -m 644 files/apt_sources/bbc_sources.list "${ROOTFS_DIR}/etc/apt/sources.list.d/bbc_sources.list"
 
+
 #dnsutils
 install -v -m 755 files/bbc-ddns-register "${ROOTFS_DIR}/usr/local/bin"
 
 on_chroot << EOF
-# create hostname file
+# create hostname and domain file
 echo thinclient > /boot/hostname
 echo national.core.bbc.co.uk > /boot/domain
 
@@ -74,16 +75,19 @@ rfkill block bluetooth
 
 #apt keyring
 mkdir -p /etc/apt/keyrings/bbc_aptly
-rm -rf /etc/apt/keyrings/bbc_aptly/raspberrypios_bullseye.gpg
+rm -f /etc/apt/keyrings/bbc_aptly/raspberrypios_bullseye.gpg
 cat /tmp/pi.key | gpg -o /etc/apt/keyrings/bbc_aptly/raspberrypios_bullseye.gpg --dearmor
 rm /tmp/pi.key
 
 #dnsutils
-rm -rf /etc/cron.hourly/bbc-ddns-register
+rm -f /etc/cron.hourly/bbc-ddns-register
 ln -s /usr/local/bin/bbc-ddns-register /etc/cron.hourly/bbc-ddns-register
 
 #enable script that runs on first boot up only
 systemctl enable firstboot.service
+
+rm -f /etc/xdg/autostart/piwiz.desktop
+
 EOF
 
 

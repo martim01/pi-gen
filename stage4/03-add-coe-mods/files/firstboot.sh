@@ -51,4 +51,5 @@ else
 fi 
 chmod +r /etc/x11vnc.pass
 
-
+#remove the raspi.list if it exists
+rm /etc/apt/sources.list.d/raspi.list
