@@ -34,6 +34,7 @@ install -v -m 755 files/bbc-ddns-register "${ROOTFS_DIR}/usr/local/bin"
 on_chroot << EOF
 # create hostname file
 echo thinclient > /boot/hostname
+echo national.core.bbc.co.uk > /boot/domain
 
 #add admin user
 if adduser --gecos "" --disabled-password tcadmin; then
@@ -73,6 +74,7 @@ rfkill block bluetooth
 
 #apt keyring
 mkdir -p /etc/apt/keyrings/bbc_aptly
+rm -rf /etc/apt/keyrings/bbc_aptly/raspberrypios_bullseye.gpg
 cat /tmp/pi.key | gpg -o /etc/apt/keyrings/bbc_aptly/raspberrypios_bullseye.gpg --dearmor
 rm /tmp/pi.key
 
