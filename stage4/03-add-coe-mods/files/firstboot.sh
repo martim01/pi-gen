@@ -7,28 +7,24 @@ ufw allow 5900
 ufw enable
 
 ##copy files from /boot for setup...
-#HOSTFILE=/boot/hostname
-##if test -f "$HOSTFILE"; then
-#hostname=''
-#  mv $HOSTFILE /etc/hostname
-#if test -f "$HOSTFILE"; then
-##  # todo - need to update /etc/hosts
-#  hostname=$(</boot/hostname)
-##fi
-#fi
+HOSTFILE=/boot/hostname
+hostname=''
+if test -f "$HOSTFILE"; then
+  hostname=$(</boot/hostname)
+fi
 
-#DOMAINFILE=/boot/domain
-#domain='national.core.bbc.co.uk'
-#if test -f "$DOMAINFILE"; then
-#  domain=$(<$DOMAINFILE)
-#fi
+DOMAINFILE=/boot/domain
+domain='national.core.bbc.co.uk'
+if test -f "$DOMAINFILE"; then
+  domain=$(<$DOMAINFILE)
+fi
 
-##update /etc/hosts
-#newLine="/127.0.0.1/c\127.0.0.1        $hostname.$domain $hostname localhost"
-#sed -i "$newLine" /etc/hosts
+#update /etc/hosts
+newLine="/127.0.0.1/c\127.0.0.1        $hostname.$domain $hostname localhost"
+sed -i "$newLine" /etc/hosts
 
-#newLine="/127.0.1.1/c\127.0.1.1        $hostname.$domain $hostname"
-#sed -i "$newLine" /etc/hosts
+newLine="/127.0.1.1/c\127.0.1.1        $hostname.$domain $hostname"
+sed -i "$newLine" /etc/hosts
 
 #/bin/hostname --file /etc/hostname
 
@@ -38,13 +34,6 @@ CONFIGFILE=/boot/thinclient-client.conf
 if test -f "$CONFIGFILE"; then
   mv $CONFIGFILE /etc/thinclient-client.conf
 fi
-
-#network config - now using a symlink
-#NETWORKFILE=/boot/net.cfg
-#if test -f "$NETWORKFILE"; then
-#  mv $NETWORKFILE /etc/dhcpcd.conf
-#  systemctl restart dhcpcd.service
-#fi
 
 #set tcadmin password
 PASSFILE=/boot/password
