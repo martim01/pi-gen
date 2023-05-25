@@ -53,3 +53,7 @@ chmod +r /etc/x11vnc.pass
 
 #remove the raspi.list if it exists
 rm /etc/apt/sources.list.d/raspi.list
+
+#setup eTouchG
+cd /opt/eGTouch
+./setup.sh -silent 2>&1 > /home/tcadmin/touch.log

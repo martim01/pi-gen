@@ -1,0 +1,9 @@
+[Unit]
+Description=Updates hostname from symlink
+After=network-online.target
+Wants=network-online.target
+DefaultDependencies=false
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/sethost.sh

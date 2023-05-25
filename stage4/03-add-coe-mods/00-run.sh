@@ -6,16 +6,23 @@ install -v -m 644 files/autostart "${ROOTFS_DIR}/etc/xdg/lxsession/LXDE-pi/autos
 install -v -m 655 files/thinclient-ui "${ROOTFS_DIR}/opt/thinclient-ui"
 install -v -m 644 files/thinclient-client.conf "${ROOTFS_DIR}/etc/thinclient-client.conf"
 
-install -v -m 644 files/eGTouchL.ini "${ROOTFS_DIR}/etc/eGTouchL.ini"
-install -v -m 655 files/eGTouchD "${ROOTFS_DIR}/opt/eGTouchD"
-install -v -m 655 files/eCalib "${ROOTFS_DIR}/opt/eCalib"
-install -v -m 777 files/eGTouchD.service "${ROOTFS_DIR}/etc/systemd/system/eGTouchD.service"
-install -v -m 777 files/81-egalax-touchscreen.rules "${ROOTFS_DIR}/etc/udev/rules.d/81-egalax-touchscreen.rules"
+install -v -m 644 files/firstboot.service "${ROOTFS_DIR}/lib/systemd/system/firstboot.service"
+install -v -m 777 files/firstboot.sh "${ROOTFS_DIR}/opt/firstboot.sh"
+install -v -m 777 files/firstboot.sh "${ROOTFS_DIR}/opt/firstboot_.sh"
+
+#install -v -m 644 files/eGTouch/eGTouchL.ini "${ROOTFS_DIR}/etc/eGTouchL.ini"
+#install -v -m 655 files/eGTouch/eGTouchD "${ROOTFS_DIR}/usr/bin/eGTouchD"
+#install -v -m 655 files/eGTouch/eCalib "${ROOTFS_DIR}/usr/bin/eCalib"
+#install -v -m 644 files/eGTouch/Rule/99-egalax-udev.rules "${ROOTFS_DIR}/etc/udev/rules.d/99-egalax-udev.rules"
+#install -v -m 644 files/eGTouch/Rule/52-egalax-virtual-libinput.conf "${ROOTFS_DIR}/usr/share/X11/xorg.conf.d/52-egalax-virtual-libinput.conf"
+#install -v -m 777 files/eGTouchD.service "${ROOTFS_DIR}/etc/systemd/system/eGTouchD.service"
 
 install -v -m 644 files/timesyncd.conf "${ROOTFS_DIR}/etc/systemd/timesyncd.conf"
 
-install -v -m 777 files/firstboot.service "${ROOTFS_DIR}/lib/systemd/system/firstboot.service"
-install -v -m 777 files/firstboot.sh "${ROOTFS_DIR}/opt/firstboot.sh"
+
+
+install -v -m 644 files/sethostname.service "${ROOTFS_DIR}/lib/systemd/system/sethostname.service"
+install -v -m 777 files/sethost.sh "${ROOTFS_DIR}/usr/local/bin/sethost.sh"
 
 install -v -m 744 files/65-srvrkeys-none "${ROOTFS_DIR}/etc/X11/Xsession.d/65-srvrkeys-none"
 
@@ -28,6 +35,7 @@ install -v -m 644 files/apt_sources/bbc_raspi_sources.list "${ROOTFS_DIR}/etc/ap
 install -v -m 644 files/apt_sources/bbc_security.list "${ROOTFS_DIR}/etc/apt/sources.list.d/bbc_security.list"
 install -v -m 644 files/apt_sources/bbc_sources.list "${ROOTFS_DIR}/etc/apt/sources.list.d/bbc_sources.list"
 
+cp -r files/eGTouch "${ROOTFS_DIR}/opt/"
 
 #dnsutils
 install -v -m 755 files/bbc-ddns-register "${ROOTFS_DIR}/usr/local/bin"
@@ -44,7 +52,7 @@ if adduser --gecos "" --disabled-password tcadmin; then
 fi
 
 #add apt user
-if adduser --gecos "" --disabled-password bbcansible; then
+if adduser --gecos "" --disabled-password -uid 1230 bbcansible; then
  usermod -a -G sudo bbcansible
  chpasswd -e <<< "bbcansible:$6$XvgvEGQvz1EnjxJu$.CBLDTUezjInULTsnRx1x9mhGfoMwAeDaDwYscR6PZqYmq4lqBemPlDke3MC1FYFf5ept8n3rdpZhBJXFe.Px0"
 fi
@@ -60,9 +68,6 @@ echo -e 'DenyUsers\t${FIRST_USER_NAME}' >> /etc/ssh/sshd_config
 #make net.cfg on the /boot partition the one we use
 rm /etc/dhcpcd.conf
 ln -s /boot/net.cfg /etc/dhcpcd.conf
-
-rm /etc/hostname
-ln -s /boot/hostname /etc/hostname
 
 #disable logging
 systemctl disable rsyslog
@@ -85,6 +90,12 @@ ln -s /usr/local/bin/bbc-ddns-register /etc/cron.hourly/bbc-ddns-register
 
 #enable script that runs on first boot up only
 systemctl enable firstboot.service
+
+#enable script that updates hostname on each reboot
+systemctl enable sethostname.service
+
+systemctl enable eGTouchD.service
+
 
 rm -f /etc/xdg/autostart/piwiz.desktop
 
